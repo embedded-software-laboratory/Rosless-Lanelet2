@@ -1,69 +1,47 @@
-set(MRT_PKG_VERSION 4.0.0)
-# Modify only if you know what you are doing!
-cmake_minimum_required(VERSION 3.5.1)
-project(lanelet2_io)
+# Define library. Only source files here!
+project(liblanelet2_io VERSION 0.1 LANGUAGES CXX)
 
-###################
-## Find packages ##
-###################
-find_package(mrt_cmake_modules REQUIRED)
-include(UseMrtStdCompilerFlags)
-include(GatherDeps)
+add_library(lanelet2_io SHARED
+        src/BinHandler.cpp
+        src/Factory.cpp
+        src/Io.cpp
+        src/OsmFile.cpp
+        src/OsmHandlerLoad.cpp
+        src/OsmHandlerWrite.cpp)
 
-# You can add a custom.cmake in order to add special handling for this package. E.g. you can do:
-# list(REMOVE_ITEM DEPENDEND_PACKAGES <package name 1> <package name 2> ...)
-# To remove libs which cannot be found automatically. You can also "find_package" other, custom dependencies there.
-# You can also set PROJECT_INSTALL_FILES to install files that are not installed by default.
-if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/custom.cmake")
-    include("${CMAKE_CURRENT_SOURCE_DIR}/custom.cmake")
-endif()
+# Define headers for this library. PUBLIC headers are used for
+# compiling the library, and will be added to consumers' build
+# paths.
+target_include_directories(lanelet2_io PUBLIC
+        $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+        $<INSTALL_INTERFACE:include>
+        PRIVATE src)
 
-find_package(AutoDeps REQUIRED COMPONENTS ${DEPENDEND_PACKAGES})
+# If we have compiler requirements for this library, list them
+# here
+target_compile_features(lanelet2_io
+        PUBLIC cxx_auto_type
+        PRIVATE cxx_variadic_templates)
 
-mrt_parse_package_xml()
+# Depend on a library that we defined in the top-level file
+target_link_libraries(lanelet2_io
+        lanelet2_core
+        pugixml
+        Boost::boost
+        Boost::filesystem
+        Boost::serialization)
 
-########################
-## Add python modules ##
-########################
-# This adds a python module if located under src/{PROJECT_NAME)
-mrt_python_module_setup()
+# 'make install' to the correct locations (provided by GNUInstallDirs).
+install(TARGETS lanelet2_io EXPORT Lanelet2IoConfig
+        ARCHIVE  DESTINATION ${CMAKE_INSTALL_LIBDIR}
+        LIBRARY  DESTINATION ${CMAKE_INSTALL_LIBDIR}
+        RUNTIME  DESTINATION ${CMAKE_INSTALL_BINDIR})  # This is for Windows
+install(DIRECTORY include/ DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
 
-mrt_glob_files(PROJECT_PYTHON_SOURCE_FILES_SRC "python_api/*.cpp")
-if (PROJECT_PYTHON_SOURCE_FILES_SRC)
-    # Add a cpp-python api library. Make sure there are no name collisions with python modules in this project
-    mrt_add_python_api( ${PROJECT_NAME}
-        FILES ${PROJECT_PYTHON_SOURCE_FILES_SRC}
-        )
-endif()
+# This makes the project importable from the install directory
+# Put config file in per-project dir (name MUST match), can also
+# just go into 'cmake'.
+install(EXPORT Lanelet2IoConfig DESTINATION share/Lanelet2Io/cmake)
 
-############################
-## Read source code files ##
-############################
-mrt_glob_files_recurse(PROJECT_HEADER_FILES_INC "include/*.h" "include/*.hpp" "include/*.cuh")
-mrt_glob_files(PROJECT_SOURCE_FILES_INC "src/*.h" "src/*.hpp" "src/*.cuh")
-mrt_glob_files(PROJECT_SOURCE_FILES_SRC "src/*.cpp" "src/*.cu")
-
-###########
-## Build ##
-###########
-# Declare a cpp library
-mrt_add_library(${PROJECT_NAME}
-    INCLUDES ${PROJECT_HEADER_FILES_INC} ${PROJECT_SOURCE_FILES_INC}
-    SOURCES ${PROJECT_SOURCE_FILES_SRC}
-    )
-
-#############
-## Install ##
-#############
-# Install all targets, headers by default and scripts and other files if specified (folders or files).
-# This command also exports libraries and config files for dependent packages and this supersedes catkin_package.
-mrt_install(PROGRAMS scripts FILES res data ${PROJECT_INSTALL_FILES})
-
-#############
-## Testing ##
-#############
-# Add test targets for cpp and python tests
-if (CATKIN_ENABLE_TESTING)
-    mrt_add_tests(test)
-    mrt_add_nosetests(test)
-endif()
+# This makes the project importable from the build directory
+export(TARGETS lanelet2_io FILE Lanelet2IoConfig.cmake)
