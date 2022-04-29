@@ -2,6 +2,7 @@
 project(liblanelet2_projection VERSION 0.1 LANGUAGES CXX)
 
 add_library(lanelet2_projection SHARED
+	src/UTM.cpp
         src/CPM.cpp)
 
 # Define headers for this library. PUBLIC headers are used for
@@ -21,7 +22,8 @@ target_compile_features(lanelet2_projection
 # Depend on a library that we defined in the top-level file
 target_link_libraries(lanelet2_projection
         lanelet2_core
-        lanelet2_io)
+        lanelet2_io
+        GeographicLib)
 
 # 'make install' to the correct locations (provided by GNUInstallDirs).
 install(TARGETS lanelet2_projection EXPORT Lanelet2ProjectionConfig

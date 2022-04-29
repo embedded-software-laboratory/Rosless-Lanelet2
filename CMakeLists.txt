@@ -9,6 +9,10 @@ include(GNUInstallDirs)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED)
 
+# Make local cmake script available
+list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake/")
+message(STATUS "Loading cmake script from: ${CMAKE_CURRENT_SOURCE_DIR}/cmake/")
+
 # Include Boost as an imported target
 find_package(Boost REQUIRED serialization filesystem program_options)
 message(STATUS "Boost Version: ${Boost_VERSION_STRING}")
@@ -18,8 +22,12 @@ find_package(Eigen3 REQUIRED NO_MODULE)
 message(STATUS "Eigen3 Version: ${EIGEN3_VERSION_STRING}")
 
 # Include PugiXML as an imported target
-find_package(PugiXml REQUIRED NO_MODULE)
+find_package(PugiXml REQUIRED)
 message(STATUS "PugiXml Version: ${PugiXml_VERSION}")
+
+# Include PugiXML as an imported target
+find_package(GeographicLib REQUIRED)
+message(STATUS "GeographicLib Version: ${GeographicLib_VERSION}")
 
 # Targets that we develop here
 enable_testing()
