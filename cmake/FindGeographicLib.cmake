@@ -36,3 +36,9 @@ find_package_handle_standard_args (GeographicLib DEFAULT_MSG
   GeographicLib_LIBRARY_DIRS GeographicLib_LIBRARIES GeographicLib_INCLUDE_DIRS)
 mark_as_advanced (GeographicLib_LIBRARY_DIRS GeographicLib_LIBRARIES
   GeographicLib_INCLUDE_DIRS)
+
+if (GeographicLib_FOUND AND NOT GeographicLib)
+  add_library(GeographicLib INTERFACE IMPORTED)
+  target_link_libraries(GeographicLib INTERFACE ${GeographicLib_LIBRARIES})
+  target_include_directories(GeographicLib INTERFACE ${GeographicLib_INCLUDE_DIRS})
+endif ()
