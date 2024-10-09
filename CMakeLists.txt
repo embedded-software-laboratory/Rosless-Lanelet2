@@ -1,5 +1,5 @@
 # At LEAST 2.8 but newer is better
-cmake_minimum_required(VERSION 3.2 FATAL_ERROR)
+cmake_minimum_required(VERSION 3.8 FATAL_ERROR)
 project(lanelet2 VERSION 1.1.1 LANGUAGES CXX)
 
 # Must use GNUInstallDirs to install libraries into correct
@@ -33,9 +33,10 @@ message(STATUS "GeographicLib Version: ${GeographicLib_VERSION}")
 enable_testing()
 add_subdirectory(lanelet2_core)
 add_subdirectory(lanelet2_io)
+add_subdirectory(lanelet2_matching)
 add_subdirectory(lanelet2_projection)
-add_subdirectory(lanelet2_traffic_rules)
 add_subdirectory(lanelet2_routing)
+add_subdirectory(lanelet2_traffic_rules)
 add_subdirectory(lanelet2_validation)
 
 # add_library(lanelet2 INTERFACE)

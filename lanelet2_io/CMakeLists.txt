@@ -26,7 +26,7 @@ target_compile_features(lanelet2_io
 # Depend on a library that we defined in the top-level file
 target_link_libraries(lanelet2_io
         lanelet2_core
-        PugiXml
+        pugixml::pugixml
         Boost::boost
         Boost::filesystem
         Boost::serialization)

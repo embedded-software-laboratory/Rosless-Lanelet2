@@ -28,20 +28,23 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "Utilities.h"
+#include "lanelet2_matching/Utilities.h"
 
 #include <lanelet2_core/geometry/Lanelet.h>
 #include <lanelet2_core/geometry/Polygon.h>
 
 #include <cmath>
 
-namespace {
+namespace
+{
 
 // from https://github.com/coincar-sim/util_eigen_geometry/blob/release/src/util_eigen_geometry.cpp
 // Result is always positive; not similar to fmod()
-double positiveFloatModulo(double x, double y) {
+double positiveFloatModulo(double x, double y)
+{
   double fmod = std::fmod(x, y);
-  if (fmod > 0.) {
+  if (fmod > 0.)
+  {
     return fmod;
   }
   double fmodPositive = fmod + std::abs(y);
@@ -50,31 +53,42 @@ double positiveFloatModulo(double x, double y) {
 }
 
 // from https://github.com/coincar-sim/util_eigen_geometry/blob/release/src/util_eigen_geometry.cpp
-double normalizeAngleRadians(double x) { return positiveFloatModulo((x + M_PI), 2.0 * M_PI) - M_PI; }
+double normalizeAngleRadians(double x)
+{
+  return positiveFloatModulo((x + M_PI), 2.0 * M_PI) - M_PI;
+}
 
 // from https://github.com/coincar-sim/util_eigen_geometry/blob/release/src/util_eigen_geometry.cpp
-double angleDifference(double targetAngle, double sourceAngle) {
+double angleDifference(double targetAngle, double sourceAngle)
+{
   double angleDiff = targetAngle - sourceAngle;
   return normalizeAngleRadians(angleDiff);
 }
 
 // from https://github.com/coincar-sim/util_eigen_geometry/blob/release/src/util_eigen_geometry.cpp
-double yawFromIsometry2d(const Eigen::Isometry2d& pose) {
+double yawFromIsometry2d(const Eigen::Isometry2d& pose)
+{
   Eigen::Rotation2D<double> rot;
   rot.fromRotationMatrix(pose.linear());
   return rot.smallestAngle();
 }
 }  // namespace
 
-namespace lanelet {
-namespace matching {
-namespace utils {
+namespace lanelet
+{
+namespace matching
+{
+namespace utils
+{
 
-double getMahalanobisDistSq(const ConstLanelet& lanelet, const ObjectWithCovariance2d& obj) {
-  if (obj.positionCovariance.isZero()) {
+double getMahalanobisDistSq(const ConstLanelet& lanelet, const ObjectWithCovariance2d& obj)
+{
+  if (obj.positionCovariance.isZero())
+  {
     throw MatchingError("Covariance must not be zero");
   }
-  if (fabs(obj.positionCovariance.determinant()) < 10e-9) {
+  if (fabs(obj.positionCovariance.determinant()) < 10e-9)
+  {
     throw MatchingError("Determinant must not be zero");
   }
   auto centerline2d = lanelet::utils::to2D(lanelet.centerline());

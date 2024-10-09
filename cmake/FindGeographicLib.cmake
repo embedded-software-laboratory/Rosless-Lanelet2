@@ -6,7 +6,8 @@
 #  GeographicLib_LIBRARIES = /usr/local/lib/libGeographic.so
 #  GeographicLib_LIBRARY_DIRS = /usr/local/lib
 
-find_library (GeographicLib_LIBRARIES Geographic
+find_library (GeographicLib_LIBRARIES
+  NAMES Geographic GeographicLib
   PATHS "${CMAKE_INSTALL_PREFIX}/../GeographicLib/lib")
 
   if (GeographicLib_LIBRARIES)
@@ -17,17 +18,17 @@ find_library (GeographicLib_LIBRARIES Geographic
   set (GeographicLib_INCLUDE_DIRS "${_ROOT_DIR}/include")
   set (GeographicLib_BINARY_DIRS "${_ROOT_DIR}/bin")
   if (NOT EXISTS "${GeographicLib_INCLUDE_DIRS}/GeographicLib/Config.h")
-    get_filename_component(_ROOT_DIR "${_ROOT_DIR}" PATH)                     # Added to script
-    set (GeographicLib_INCLUDE_DIRS "${_ROOT_DIR}/include")                   # Added to script
-    set (GeographicLib_BINARY_DIRS "${_ROOT_DIR}/bin")                        # Added to script
-    if (NOT EXISTS "${GeographicLib_INCLUDE_DIRS}/GeographicLib/Config.h")    # Added to script
+    get_filename_component(_ROOT_DIR "${_ROOT_DIR}" PATH)
+    set (GeographicLib_INCLUDE_DIRS "${_ROOT_DIR}/include")
+    set (GeographicLib_BINARY_DIRS "${_ROOT_DIR}/bin")
+    if (NOT EXISTS "${GeographicLib_INCLUDE_DIRS}/GeographicLib/Config.h")
       unset (GeographicLib_INCLUDE_DIRS)
       unset (GeographicLib_LIBRARIES)
       unset (GeographicLib_LIBRARY_DIRS)
       unset (GeographicLib_BINARY_DIRS)
-    endif()                                                                   # Added to script
+    endif()
   endif ()
-  unset (_ROOT_DIR)                                                           # Moved below if() statements
+  unset (_ROOT_DIR)
 endif ()
 
 include (FindPackageHandleStandardArgs)
@@ -35,10 +36,3 @@ find_package_handle_standard_args (GeographicLib DEFAULT_MSG
   GeographicLib_LIBRARY_DIRS GeographicLib_LIBRARIES GeographicLib_INCLUDE_DIRS)
 mark_as_advanced (GeographicLib_LIBRARY_DIRS GeographicLib_LIBRARIES
   GeographicLib_INCLUDE_DIRS)
-  
-if (GeographicLib_FOUND)
-    add_library(GeographicLib INTERFACE IMPORTED)
-    target_link_libraries(GeographicLib INTERFACE ${GeographicLib_LIBRARIES})
-    target_include_directories(GeographicLib INTERFACE ${GeographicLib_INCLUDE_DIRS})
-endif ()
-
